@@ -263,7 +263,26 @@ class BayesianOptimization(object):
         self.gp.set_params(**gp_params)
 
         # Find unique rows of X to avoid GP from breaking
-        self.gp.fit(self.space.X, self.space.Y)
+        self.gp.fit(self.space.X.extend(self.source_observations), self.space.Y.extend(self.source_outs))
+
+        while x_max in self.space:
+            x_max = self.space.random_points(1)[0]
+
+        # Evaluate y_hat_s at x_n using the GP
+        f_arr = np.array([x_max])
+        f_arr = f_arr.reshape((-1, 1))
+        y_hat_s = self.gp.predict(f_arr)[0]
+
+        # Update alpha and beta
+        alpha = self.alpha_0 + 0.5
+        beta = self.beta_0 + np.sum(np.square(np.diff([self.space.Y, self.source_outs[:len(self.space.Y)]], axis=0))) / 2.
+
+        # Compute noise
+        source_noise = beta / (alpha + 1)
+
+        # Updating the GP.
+        self.gp.alpha = source_noise
+
 
         # Finding argmax of the acquisition function.
         x_max = acq_max(ac=self.util.utility,
