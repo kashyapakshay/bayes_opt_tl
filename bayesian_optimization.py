@@ -53,7 +53,7 @@ class BayesianOptimization(object):
 
 		# Internal GP regressor
 		self.gp = GaussianProcessRegressor(
-			kernel=RBF(),
+			kernel=Matern(nu=2.5),
 			n_restarts_optimizer=25,
 			random_state=self.random_state
 		)
@@ -274,7 +274,7 @@ class BayesianOptimization(object):
 		self.gp.fit(self.space.X, self.space.Y)
 
 		gp_source = GaussianProcessRegressor(
-			kernel=RBF(),
+			kernel=Matern(nu=2.5),
 			n_restarts_optimizer=25,
 			random_state=self.random_state
 		)
