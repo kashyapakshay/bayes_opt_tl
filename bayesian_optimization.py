@@ -58,6 +58,13 @@ class BayesianOptimization(object):
 			random_state=self.random_state
 		)
 
+		self.gp_source = GaussianProcessRegressor(
+			kernel=Matern(nu=2.5),
+			n_restarts_optimizer=25,
+			random_state=self.random_state
+		)
+		self.gp_source.fit(self.source_observations, self.source_outs)
+
 		self.y_hat = []
 		self.y_s = []
 		# self.kernel = C(1.0, constant_value_bounds="fixed") * RBF(1.0, length_scale_bounds="fixed")
@@ -273,18 +280,10 @@ class BayesianOptimization(object):
 
 		self.gp.fit(self.space.X, self.space.Y)
 
-		gp_source = GaussianProcessRegressor(
-			kernel=Matern(nu=2.5),
-			n_restarts_optimizer=25,
-			random_state=self.random_state
-		)
-		# Find unique rows of X to avoid GP from breaking
-		gp_source.fit(self.source_observations, self.source_outs)
-
 		# Evaluate y_hat_s at x_n using the GP
 		f_arr = np.array([self.space.X[-1]])
 		# f_arr = f_arr.reshape((-1, f_arr.shape[0]))
-		y_hat_s = gp_source.predict(f_arr)[0]
+		y_hat_s = self.gp_source.predict(f_arr)[0]
 
 		self.y_hat.append(y_hat_s)
 		self.y_s.append(y_max)
@@ -341,7 +340,7 @@ class BayesianOptimization(object):
 			# Evaluate y_hat_s at x_n using the GP
 			f_arr = np.array([x_max])
 			# f_arr = f_arr.reshape((-1, f_arr.shape[0]))
-			y_hat_s = gp_source.predict(f_arr)[0]
+			y_hat_s = self.gp_source.predict(f_arr)[0]
 
 			self.y_hat.append(y_hat_s)
 			self.y_s.append(y_max)
