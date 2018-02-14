@@ -28,8 +28,8 @@ class BayesianOptimization(object):
 		self.source_observations = source_observations
 		self.source_outs = source_outs
 
-		self.alpha_0 = 0.5
-		self.beta_0 = 0.5
+		self.alpha_0 = 0.05
+		self.beta_0 = 0.005
 
 		# Store the original dictionary
 		self.pbounds = pbounds
