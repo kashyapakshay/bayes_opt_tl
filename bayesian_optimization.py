@@ -28,8 +28,8 @@ class BayesianOptimization(object):
 		self.source_observations = source_observations
 		self.source_outs = source_outs
 
-		self.alpha_0 = 0.05
-		self.beta_0 = 0.005
+		self.alpha_0 = 0.005
+		self.beta_0 = 0.0005
 
 		# Store the original dictionary
 		self.pbounds = pbounds
@@ -283,7 +283,7 @@ class BayesianOptimization(object):
 
 		# Evaluate y_hat_s at x_n using the GP
 		f_arr = np.array([self.space.X[-1]])
-		f_arr = f_arr.reshape((-1, 1))
+		# f_arr = f_arr.reshape((-1, f_arr.shape[0]))
 		y_hat_s = gp_source.predict(f_arr)[0]
 
 		self.y_hat.append(y_hat_s)
@@ -340,7 +340,7 @@ class BayesianOptimization(object):
 
 			# Evaluate y_hat_s at x_n using the GP
 			f_arr = np.array([x_max])
-			f_arr = f_arr.reshape((-1, 1))
+			# f_arr = f_arr.reshape((-1, f_arr.shape[0]))
 			y_hat_s = gp_source.predict(f_arr)[0]
 
 			self.y_hat.append(y_hat_s)
